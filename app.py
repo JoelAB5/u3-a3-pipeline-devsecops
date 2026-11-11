@@ -1,10 +1,21 @@
-"""Cliente vulnerable de laboratorio. La credencial es ficticia."""
+"""Cliente con credenciales externas y tiempo de espera limitado."""
+
+import os
+from urllib.parse import urlsplit
 
 import requests
 
 
 def fetch_data(url):
-    # Credencial FICTICIA para demostrar el hallazgo B105 de Bandit.
-    api_token = "12345-SUPER-SECRET-KEY"
-    response = requests.get(f"{url}?key={api_token}")
+    """Consulta un endpoint HTTPS con una credencial del entorno."""
+    parsed_url = urlsplit(url)
+    if parsed_url.scheme != "https" or not parsed_url.hostname:
+        raise ValueError("La URL debe usar HTTPS y contener un servidor valido")
+    api_token = os.environ["API_TOKEN"]
+    response = requests.get(
+        url,
+        headers={"Authorization": f"Bearer {api_token}"},
+        timeout=10,
+    )
+    response.raise_for_status()
     return response.json()
