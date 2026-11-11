@@ -8,3 +8,5 @@ def fetch_data(url):
     api_token = "12345-SUPER-SECRET-KEY"
     response = requests.get(f"{url}?key={api_token}")
     return response.json()
+
+# Cambio menor para disparar el analisis del Pull Request.
